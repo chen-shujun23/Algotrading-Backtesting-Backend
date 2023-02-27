@@ -2,7 +2,7 @@
   "name": "algotrading-backtesting-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server",
@@ -27,9 +27,13 @@
     "jsonwebtoken": "^9.0.0",
     "moment-timezone": "^0.5.41",
     "mongoose": "^6.10.0",
+    "pg": "^8.9.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.29.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "sequelize-cli": "^6.6.0"
   }
 }
