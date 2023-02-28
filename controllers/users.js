@@ -41,9 +41,7 @@ const createUser = async (req, res) => {
       message: "User has been created successfully.",
     });
   } catch (err) {
-    res
-      .status(400)
-      .json({ status: "400 Bad Request", message: errors.array()[0].msg });
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
 
@@ -56,14 +54,7 @@ const userLogin = async (req, res) => {
         .status(400)
         .json({ status: "400 Bad Request", message: "Email does not exist." });
     }
-    const inactive = await User.findOne({
-      where: { is_active: false },
-    });
-    if (inactive) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "Inactive user." });
-    }
+
     const result = await bcrypt.compare(req.body.password, user.password);
     if (!result) {
       return res
@@ -73,6 +64,8 @@ const userLogin = async (req, res) => {
 
     const payload = {
       id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email,
     };
 
@@ -93,4 +86,47 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { createUser, userLogin };
+// Function for admin login
+const adminLogin = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: { email: req.body.email },
+    });
+    if (!user.is_admin) {
+      return res.status(401).json({
+        status: "401 Unauthorized",
+        message: "User is not an administrator.",
+      });
+    }
+    const result = await bcrypt.compare(req.body.password, user.password);
+    if (!result) {
+      return res
+        .status(401)
+        .json({ status: "401 Unauthorized", message: "Invalid password." });
+    }
+
+    const payload = {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+    };
+
+    const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
+      expiresIn: "20m",
+      jwtid: uuidv4(),
+    });
+
+    const refresh = jwt.sign(payload, process.env.REFRESH_SECRET, {
+      expiresIn: "30D",
+      jwtid: uuidv4(),
+    });
+
+    const response = { access, refresh };
+    res.json(response);
+  } catch (err) {
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
+module.exports = { createUser, userLogin, adminLogin };

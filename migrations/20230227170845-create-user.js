@@ -14,7 +14,13 @@ module.exports = {
       first_name: {
         allowNull: false,
         type: Sequelize.STRING,
-        validate: { isAlpha: true },
+        validate: {
+          validateName: function (name) {
+            if (!/^[A-Za-z ]+$/.test(name)) {
+              throw new Error("Invalid name.");
+            }
+          },
+        },
       },
       last_name: {
         allowNull: false,
@@ -32,15 +38,6 @@ module.exports = {
         type: Sequelize.STRING,
       },
       is_admin: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
-        validate: {
-          isBoolean: function (val) {
-            return typeof val == "boolean";
-          },
-        },
-      },
-      is_active: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
         validate: {

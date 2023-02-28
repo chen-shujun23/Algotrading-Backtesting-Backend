@@ -8,7 +8,14 @@
     "dev": "nodemon server",
     "start": "node server.js",
     "migrate": "npx sequelize-cli db:migrate",
-    "undo migrate": "npx sequelize-cli db:migrate:undo"
+    "undo-migrate": "npx sequelize-cli db:migrate:undo",
+    "undo-migrate-all": "npx sequelize-cli db:migrate:undo:all",
+    "seed-users": "npx sequelize-cli seed:generate --name demo-users",
+    "seed-strategies": "npx sequelize-cli seed:generate --name demo-strategies",
+    "seed-simple-conditions": "npx sequelize-cli seed:generate --name demo-simple-conditions",
+    "undo-seed": "npx sequelize-cli db:seed:undo",
+    "seed-all": "npx sequelize-cli db:seed:all",
+    "undo-seed-all": "npx sequelize-cli db:seed:undo:all"
   },
   "repository": {
     "type": "git",
