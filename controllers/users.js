@@ -6,34 +6,44 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
 
 // Function for creating user account
 const createUser = async (req, res) => {
   try {
+    //Check if user already exists
     const user = await User.findOne({ where: { email: req.body.email } });
     if (user) {
       return res.status(400).json({
-        status: "Bad Request",
+        status: "400 Bad Request",
         message: "User already exists",
       });
     }
-    const { first_name, last_name, email, password, is_admin, is_active } =
-      req.body;
-    const hash = await bcrypt.hash(password, 10);
-    const createUser = await User.create({
-      first_name,
-      last_name,
-      email,
+    //Check if password if valid
+    const err = validationResult(req);
+    if (!err.isEmpty()) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: err.array() });
+    }
+    //Create user account after checks
+    const hash = await bcrypt.hash(req.body.password, 10);
+    await User.create({
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
       password: hash,
-      is_admin,
-      is_active,
+      is_admin: req.body.is_admin,
+      is_active: req.body.is_active,
     });
     res.status(201).json({
-      status: "Created",
+      status: "201 Created",
       message: "User has been created successfully.",
     });
   } catch (err) {
-    res.status(400).json({ status: "Bad Request", message: err.message });
+    res
+      .status(400)
+      .json({ status: "400 Bad Request", message: errors.array()[0].msg });
   }
 };
 
@@ -44,13 +54,21 @@ const userLogin = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ status: "Bad Request", message: "Email does not exist." });
+        .json({ status: "400 Bad Request", message: "Email does not exist." });
+    }
+    const inactive = await User.findOne({
+      where: { is_active: false },
+    });
+    if (inactive) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: "Inactive user." });
     }
     const result = await bcrypt.compare(req.body.password, user.password);
     if (!result) {
       return res
         .status(401)
-        .json({ status: "Unauthorized", message: "Invalid password." });
+        .json({ status: "401 Unauthorized", message: "Invalid password." });
     }
 
     const payload = {
@@ -71,8 +89,8 @@ const userLogin = async (req, res) => {
     const response = { access, refresh };
     res.json(response);
   } catch (err) {
-    res.status(400).json({ status: "Bad Request", message: err.message });
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
 
-module.exports = { createUser };
+module.exports = { createUser, userLogin };

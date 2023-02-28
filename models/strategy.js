@@ -32,26 +32,42 @@ module.exports = (sequelize, DataTypes) => {
       ticker: {
         allowNull: false,
         type: Sequelize.STRING,
+        validate: {
+          validateTicker: function (ticker) {
+            if (!/^[A-Z]{1,5}$/.test(ticker)) {
+              throw new Error("Invalid ticker.");
+            }
+          },
+        },
       },
       capital: {
         allowNull: false,
         type: Sequelize.FLOAT,
+        validate: { isFloat: true },
       },
       start_date: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
+        validate: { isDate: true },
       },
       investment_horizon: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        validate: { isInt: true },
       },
       stop_loss: {
         allowNull: true,
         type: Sequelize.FLOAT,
+        validate: { isFloat: true },
       },
       is_history: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
       },
     },
     {

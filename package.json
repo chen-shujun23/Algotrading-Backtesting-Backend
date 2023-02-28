@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server",
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "undo migrate": "npx sequelize-cli db:migrate:undo"
   },
   "repository": {
     "type": "git",
@@ -24,9 +26,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
-    "moment-timezone": "^0.5.41",
-    "mongoose": "^6.10.0",
     "pg": "^8.9.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.29.0",

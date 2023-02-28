@@ -17,6 +17,7 @@ module.exports = {
       short_moving_avg: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        validate: { isInt: true },
       },
       relationship: {
         allowNull: false,
@@ -25,6 +26,7 @@ module.exports = {
       long_moving_avg: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        validate: { isInt: true },
       },
       buy_sell: {
         allowNull: false,

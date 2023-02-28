@@ -1,5 +1,7 @@
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
+const bcrypt = require("bcrypt");
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("users", {
@@ -12,15 +14,18 @@ module.exports = {
       first_name: {
         allowNull: false,
         type: Sequelize.STRING,
+        validate: { isAlpha: true },
       },
       last_name: {
         allowNull: false,
         type: Sequelize.STRING,
+        validate: { isAlpha: true },
       },
       email: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true,
+        validate: { isEmail: true },
       },
       password: {
         allowNull: false,
@@ -29,10 +34,20 @@ module.exports = {
       is_admin: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
       },
       is_active: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
       },
       createdAt: {
         allowNull: false,

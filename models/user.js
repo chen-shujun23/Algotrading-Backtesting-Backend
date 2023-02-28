@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const Sequelize = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -23,15 +24,18 @@ module.exports = (sequelize, DataTypes) => {
       first_name: {
         allowNull: false,
         type: Sequelize.STRING,
+        validate: { isAlpha: true },
       },
       last_name: {
         allowNull: false,
         type: Sequelize.STRING,
+        validate: { isAlpha: true },
       },
       email: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true,
+        validate: { isEmail: true },
       },
       password: {
         allowNull: false,
@@ -40,10 +44,20 @@ module.exports = (sequelize, DataTypes) => {
       is_admin: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
       },
       is_active: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
       },
     },
     {
