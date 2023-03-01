@@ -4,7 +4,13 @@ const { body } = require("express-validator");
 const router = express.Router();
 
 // Import functions from controller
-const { createUser, userLogin, adminLogin } = require("../controllers/users");
+const {
+  createUser,
+  getAllUsers,
+  getUser,
+  userLogin,
+  adminLogin,
+} = require("../controllers/users");
 
 // Create routes/ endpoints
 router.put(
@@ -17,6 +23,8 @@ router.put(
   ],
   createUser
 );
+router.get("/all-users", getAllUsers);
+router.get("/user/", getUser);
 router.post("/user-login", userLogin);
 router.post("/admin-login", adminLogin);
 

@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
 
-// Function for creating user account
+// Function to CREATE a new user
 const createUser = async (req, res) => {
   try {
     //Check if user already exists
@@ -45,6 +45,37 @@ const createUser = async (req, res) => {
   }
 };
 
+// Function to READ all user accounts
+const getAllUsers = async (req, res) => {
+  try {
+    const allUsers = await User.findAll({
+      attributes: ["first_name", "last_name", "email"],
+    });
+    res.json(allUsers);
+  } catch (err) {
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
+// Function to READ one user account
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findAll({
+      where: { email: req.body.email },
+      attributes: ["first_name", "last_name", "email"],
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: "User does not exist." });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
 // Function for user login
 const userLogin = async (req, res) => {
   try {
@@ -52,7 +83,7 @@ const userLogin = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ status: "400 Bad Request", message: "Email does not exist." });
+        .json({ status: "400 Bad Request", message: "User does not exist." });
     }
 
     const result = await bcrypt.compare(req.body.password, user.password);
@@ -92,9 +123,14 @@ const adminLogin = async (req, res) => {
     const user = await User.findOne({
       where: { email: req.body.email },
     });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: "Email does not exist." });
+    }
     if (!user.is_admin) {
-      return res.status(401).json({
-        status: "401 Unauthorized",
+      return res.status(403).json({
+        status: "403 Forbidden",
         message: "User is not an administrator.",
       });
     }
@@ -129,4 +165,4 @@ const adminLogin = async (req, res) => {
   }
 };
 
-module.exports = { createUser, userLogin, adminLogin };
+module.exports = { createUser, getAllUsers, getUser, userLogin, adminLogin };
