@@ -41,28 +41,30 @@ const createUser = async (req, res) => {
       message: "User has been created successfully.",
     });
   } catch (err) {
+    console.log("PUT /users/create", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
 
-// Function to READ all user accounts
+// Function to READ all user accounts (NEED AUTH)
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await User.findAll({
-      attributes: ["first_name", "last_name", "email"],
+      attributes: ["id", "first_name", "last_name", "email", "is_admin"],
     });
     res.json(allUsers);
   } catch (err) {
+    console.log("GET /users/all-users", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
 
-// Function to READ one user account
+// Function to READ one user account (NEED AUTH)
 const getUser = async (req, res) => {
   try {
     const user = await User.findAll({
       where: { email: req.body.email },
-      attributes: ["first_name", "last_name", "email"],
+      attributes: ["id", "first_name", "last_name", "email", "is_admin"],
     });
 
     if (!user) {
@@ -72,6 +74,48 @@ const getUser = async (req, res) => {
     }
     res.json(user);
   } catch (err) {
+    console.log("GET /users/user", err);
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
+// Function to UPDATE user account (NEED AUTH)
+const updateUser = async (req, res) => {
+  try {
+    // const user = await User.findOne({
+    //   where: { id: req.params.id },
+    // });
+    // if (!user) {
+    //   return res
+    //     .status(400)
+    //     .json({ status: "400 Bad Request", message: "User does not exist." });
+    // }
+    const hash = await bcrypt.hash(req.body.password, 10);
+    await User.update(
+      {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        password: hash,
+        is_admin: req.body.is_admin,
+        is_active: req.body.is_active,
+      },
+      {
+        where: { id: req.params.id },
+      }
+    );
+  } catch (err) {
+    console.log("PUT /users/update/:id", err);
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
+// Function to DELETE user account (NEED AUTH)
+const deleteUser = async (req, res) => {
+  try {
+    await User.destroy({ where: { email: req.body.email } });
+    res.status(200).json({ status: "200 OK", message: "User is deleted." });
+  } catch (err) {
+    console.log("DEL /users/delete", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
@@ -113,6 +157,7 @@ const userLogin = async (req, res) => {
     const response = { access, refresh };
     res.json(response);
   } catch (err) {
+    console.log("POST /users/user-login", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
@@ -161,8 +206,17 @@ const adminLogin = async (req, res) => {
     const response = { access, refresh };
     res.json(response);
   } catch (err) {
+    console.log("POST /users/admin-login", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
   }
 };
 
-module.exports = { createUser, getAllUsers, getUser, userLogin, adminLogin };
+module.exports = {
+  createUser,
+  getAllUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  userLogin,
+  adminLogin,
+};

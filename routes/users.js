@@ -8,6 +8,8 @@ const {
   createUser,
   getAllUsers,
   getUser,
+  updateUser,
+  deleteUser,
   userLogin,
   adminLogin,
 } = require("../controllers/users");
@@ -24,7 +26,9 @@ router.put(
   createUser
 );
 router.get("/all-users", getAllUsers);
-router.get("/user/", getUser);
+router.get("/user", getUser);
+router.put("/update/:id", updateUser);
+router.delete("/delete", deleteUser);
 router.post("/user-login", userLogin);
 router.post("/admin-login", adminLogin);
 
