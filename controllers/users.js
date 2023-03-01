@@ -19,7 +19,7 @@ const createUser = async (req, res) => {
         message: "User already exists",
       });
     }
-    //Check if password if valid
+    //Check if password is valid
     const err = validationResult(req);
     if (!err.isEmpty()) {
       return res
@@ -81,15 +81,18 @@ const getUser = async (req, res) => {
 
 // Function to UPDATE user account (NEED AUTH)
 const updateUser = async (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+
   try {
-    // const user = await User.findOne({
-    //   where: { id: req.params.id },
-    // });
-    // if (!user) {
-    //   return res
-    //     .status(400)
-    //     .json({ status: "400 Bad Request", message: "User does not exist." });
-    // }
+    const user = await User.findOne({
+      where: { id: req.params.id },
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: "User does not exist." });
+    }
     const hash = await bcrypt.hash(req.body.password, 10);
     await User.update(
       {
@@ -103,6 +106,7 @@ const updateUser = async (req, res) => {
         where: { id: req.params.id },
       }
     );
+    res.status(200).json({ status: "200 OK", message: "User updated" });
   } catch (err) {
     console.log("PUT /users/update/:id", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });

@@ -16,3 +16,7 @@ NODE_ENV=development
    npx sequelize-cli db:create
 
 access_token in state, refresh token in local storage
+
+user to strategy => one to many
+
+strategy to
