@@ -20,15 +20,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: { model: "users", key: "id" },
-      },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
       ticker: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -40,34 +31,35 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      capital: {
-        allowNull: false,
-        type: Sequelize.FLOAT,
-        validate: { isFloat: true },
-      },
-      start_date: {
-        allowNull: false,
-        type: Sequelize.DATEONLY,
-        validate: { isDate: true },
-      },
-      investment_horizon: {
+      short_term_sma_buy: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
       },
-      stop_loss: {
-        allowNull: true,
-        type: Sequelize.FLOAT,
-        validate: { isFloat: true },
-      },
-      is_history: {
+      long_term_sma_buy: {
         allowNull: false,
-        type: Sequelize.BOOLEAN,
-        validate: {
-          isBoolean: function (val) {
-            return typeof val == "boolean";
-          },
-        },
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      short_term_sma_sell: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      long_term_sma_sell: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      percentage_shares_buy: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      percentage_shares_sell: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
       },
     },
     {

@@ -1,0 +1,116 @@
+/** @type {import('sequelize-cli').Migration} */
+const db = require("../models");
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkInsert(
+      "users-strategies",
+      [
+        {
+          title: "Strategy Alpha",
+          user_id: "126c2e98-d44e-4024-876a-2a0db33aea1f",
+          strategy_id: 1,
+          capital: 10000,
+          start_date: "2021-03-23",
+          investment_horizon: 365,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Bravo",
+          user_id: "126c2e98-d44e-4024-876a-2a0db33aea1f",
+          strategy_id: 2,
+          capital: 20000,
+          start_date: "2021-04-24",
+          investment_horizon: 365,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Charlie ",
+          user_id: "6d07d932-277c-445d-93a3-b084734b716f",
+          strategy_id: 2,
+          capital: 30000,
+          start_date: "2021-05-25",
+          investment_horizon: 365,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Delta",
+          user_id: "6d07d932-277c-445d-93a3-b084734b716f",
+          strategy_id: 3,
+          capital: 10000,
+          start_date: "2021-06-26",
+          investment_horizon: 180,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Echo",
+          user_id: "24635039-a5de-47a2-8adb-811a25b90424",
+          strategy_id: 3,
+          capital: 20000,
+          start_date: "2021-07-27",
+          investment_horizon: 180,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Foxtrot",
+          user_id: "24635039-a5de-47a2-8adb-811a25b90424",
+          strategy_id: 4,
+          capital: 30000,
+          start_date: "2021-08-28",
+          investment_horizon: 365,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Golf",
+          user_id: "a3910a32-a192-4e1e-bf2d-e25deb06da53",
+          strategy_id: 4,
+          capital: 10000,
+          start_date: "2021-03-23",
+          investment_horizon: 365,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy Hotel",
+          user_id: "a3910a32-a192-4e1e-bf2d-e25deb06da53",
+          strategy_id: 5,
+          capital: 20000,
+          start_date: "2021-03-23",
+          investment_horizon: 180,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "Strategy India",
+          user_id: "6ae6b79d-dfcc-428e-9cf6-db44e9e7f5f3",
+          strategy_id: 5,
+          capital: 30000,
+          start_date: "2021-03-23",
+          investment_horizon: 180,
+          is_history: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      {}
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete("users-strategies", null, {});
+  },
+};

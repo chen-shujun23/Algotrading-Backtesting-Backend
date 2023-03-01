@@ -106,7 +106,7 @@ const updateUser = async (req, res) => {
         where: { id: req.params.id },
       }
     );
-    res.status(200).json({ status: "200 OK", message: "User updated" });
+    res.status(200).json({ status: "200 OK", message: "User is updated." });
   } catch (err) {
     console.log("PUT /users/update/:id", err);
     res.status(400).json({ status: "400 Bad Request", message: err.message });
@@ -146,6 +146,7 @@ const userLogin = async (req, res) => {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
+      is_admin: user.is_admin,
     };
 
     const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
@@ -195,6 +196,7 @@ const adminLogin = async (req, res) => {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
+      is_admin: user.is_admin,
     };
 
     const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
@@ -215,6 +217,32 @@ const adminLogin = async (req, res) => {
   }
 };
 
+// Function to generate new access token
+const refresh = async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.body.refresh, process.env.REFRESH_SECRET);
+
+    const payload = {
+      id: decoded.id,
+      first_name: decoded.first_name,
+      last_name: decoded.last_name,
+      email: decoded.email,
+      is_admin: decoded.is_admin,
+    };
+
+    const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
+      expiresIn: "20m",
+      jwtid: uuidv4(),
+    });
+
+    const response = { access };
+    res.json(response);
+  } catch (err) {
+    console.log("POST /users/refresh", err);
+    res.status(401).json({ status: "401 Unauthorized", message: err.message });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -223,4 +251,5 @@ module.exports = {
   deleteUser,
   userLogin,
   adminLogin,
+  refresh,
 };

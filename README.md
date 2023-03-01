@@ -12,11 +12,31 @@ DB_HOST=localhost
 DB_DIALECT=postgres
 NODE_ENV=development
 
-2. Create database
-   npx sequelize-cli db:create
+2. Create database => npx sequelize-cli db:create
+
+npm START
+npm run migrate
+npm run seed-users
+npm run seed-strategies
+npm run seed-users-strategies
 
 access_token in state, refresh token in local storage
 
-user to strategy => one to many
+User.hasMany(UserStrategy)
+UserStrategy.belongsTo(User)
 
-strategy to
+Strategy.hasMany(UserStrategy)
+UserStrategy.belongsTo(Strategy)
+
+User.belongsToMany(Strategy,{through:'users-strategies'})
+Strategy.belongsToMany(User,{through:'users-strategies'})
+
+Death Cross (Bearish signal) -> SELL
+50 SMA < 200 SMA
+50 SMA < 100 SMA
+20 SMA < 50 SMA
+
+Golden Cross (Bullish signal) -> BUY
+50 SMA > 200 SMA
+50 SMA > 100 SMA
+20 SMA > 50 SMA

@@ -12,6 +12,7 @@ const {
   deleteUser,
   userLogin,
   adminLogin,
+  refresh,
 } = require("../controllers/users");
 
 // Create routes/ endpoints
@@ -31,6 +32,7 @@ router.put("/update/:id", updateUser);
 router.delete("/delete", deleteUser);
 router.post("/user-login", userLogin);
 router.post("/admin-login", adminLogin);
+router.post("/refresh", refresh);
 
 // Export routes for server.js to access
 module.exports = router;
