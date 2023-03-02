@@ -33,7 +33,17 @@ module.exports = {
         type: Sequelize.DATEONLY,
         validate: { isDate: true },
       },
-      investment_horizon: {
+      end_date: {
+        allowNull: false,
+        type: Sequelize.DATEONLY,
+        validate: { isDate: true },
+      },
+      qty_shares_buy: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      qty_shares_sell: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },

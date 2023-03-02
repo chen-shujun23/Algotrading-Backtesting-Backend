@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      ticker: {
+      symbol: {
         allowNull: false,
         type: Sequelize.STRING,
         validate: {
@@ -36,16 +36,6 @@ module.exports = {
         validate: { isInt: true },
       },
       long_term_sma_sell: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      percentage_shares_buy: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      percentage_shares_sell: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
