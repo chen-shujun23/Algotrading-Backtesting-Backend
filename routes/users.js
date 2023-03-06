@@ -2,6 +2,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
+const auth = require("../middleware/auth");
 
 // Import functions from controller
 const {
@@ -26,10 +27,10 @@ router.put(
   ],
   createUser
 );
-router.get("/all-users", getAllUsers);
-router.get("/user", getUser);
-router.put("/update/:id", updateUser);
-router.delete("/delete", deleteUser);
+router.get("/all-users", auth, getAllUsers);
+router.get("/user", auth, getUser);
+router.put("/update/:id", auth, updateUser);
+router.delete("/delete", auth, deleteUser);
 router.post("/user-login", userLogin);
 router.post("/admin-login", adminLogin);
 router.post("/refresh", refresh);
