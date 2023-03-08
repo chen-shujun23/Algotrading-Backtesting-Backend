@@ -1,7 +1,7 @@
 //Import environment
 require("dotenv").config();
 // Import User model
-const { User, Strategy } = require("../models");
+const { User, Strategy, UserStrategy } = require("../models");
 // Import modules for encryption
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -234,8 +234,7 @@ const refresh = async (req, res) => {
 // Function to get strategies by user UUID (NEED AUTH)
 const getStrategiesByUser = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const user = await User.findByPk(userId, {
+    const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Strategy,
@@ -257,10 +256,87 @@ const getStrategiesByUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     const strategies = user.Strategies;
-    return res.status(200).json({ strategies });
+    return res.status(200).send({ strategies });
   } catch (err) {
     console.log("GET /:id/strategies", err);
     return res.status(500).json({ message: err.message });
+  }
+};
+
+//Function to create a new strategy for user (NEED AUTH)
+const createStrategy = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    if (user.is_admin) {
+      return res.status(403).json({
+        message: "Cannot create strategies using admin account.",
+      });
+    }
+
+    let existingStrategy = await Strategy.findOne({
+      where: {
+        symbol: req.body.symbol,
+        title: req.body.title,
+        capital: req.body.capital,
+        start_date: req.body.start_date,
+        end_date: req.body.end_date,
+        sSMA: req.body.sSMA,
+        lSMA: req.body.lSMA,
+        qty_shares: req.body.qty_shares,
+      },
+    });
+
+    if (existingStrategy) {
+      const userStrategy = await UserStrategy.findOne({
+        where: {
+          user_id: user.id,
+          strategy_id: existingStrategy.id,
+        },
+      });
+
+      if (userStrategy) {
+        return res.status(409).json({
+          message: "This strategy already exists for user.",
+        });
+      }
+
+      // Associate existing strategy with the new user
+      await UserStrategy.create({
+        user_id: user.id,
+        strategy_id: existingStrategy.id,
+      });
+
+      return res.json({
+        message: "Existing strategy has been associated with the user.",
+      });
+    }
+
+    const strategy = await Strategy.create({
+      symbol: req.body.symbol,
+      title: req.body.title,
+      capital: req.body.capital,
+      start_date: req.body.start_date,
+      end_date: req.body.end_date,
+      sSMA: req.body.sSMA,
+      lSMA: req.body.lSMA,
+      qty_shares: req.body.qty_shares,
+    });
+
+    await UserStrategy.create({
+      user_id: user.id,
+      strategy_id: strategy.id,
+    });
+
+    res
+      .status(201)
+      .json({ message: "Strategy has been created successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -274,4 +350,5 @@ module.exports = {
   adminLogin,
   refresh,
   getStrategiesByUser,
+  createStrategy,
 };
