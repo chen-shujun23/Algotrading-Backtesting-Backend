@@ -3,6 +3,7 @@ const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
 const auth = require("../middleware/auth");
+const authAdmin = require("../middleware/authAdmin");
 
 // Import functions from controller
 const {
@@ -12,7 +13,6 @@ const {
   updateUser,
   deleteUser,
   userLogin,
-  adminLogin,
   refresh,
   getStrategiesByUser,
   createStrategy,
@@ -29,12 +29,11 @@ router.put(
   ],
   createUser
 );
-router.get("/all-users", auth, getAllUsers);
+router.get("/all-users", authAdmin, getAllUsers);
 router.get("/user", auth, getUser);
 router.put("/update/:id", auth, updateUser);
 router.delete("/delete", auth, deleteUser);
 router.post("/user-login", userLogin);
-router.post("/admin-login", adminLogin);
 router.post("/refresh", refresh);
 router.get("/:id/strategies", auth, getStrategiesByUser);
 router.post("/:id/strategies", auth, createStrategy);

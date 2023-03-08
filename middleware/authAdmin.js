@@ -1,14 +1,21 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
-const auth = (req, res, next) => {
+const authAdmin = (req, res, next) => {
   const token = req.headers["authorization"].replace("Bearer ", "");
 
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
       req.decoded = decoded;
-      next();
+
+      if (decoded.is_admin) {
+        next();
+      } else {
+        return res.status(403).json({
+          message: "Not authorised to access",
+        });
+      }
     } catch (err) {
       return res.status(401).send({
         message: "Not authorised to access",
@@ -21,4 +28,4 @@ const auth = (req, res, next) => {
   }
 };
 
-module.exports = auth;
+module.exports = authAdmin;

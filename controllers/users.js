@@ -155,56 +155,6 @@ const userLogin = async (req, res) => {
   }
 };
 
-// Function for admin login
-const adminLogin = async (req, res) => {
-  try {
-    const user = await User.findOne({
-      where: { email: req.body.email },
-    });
-    if (!user) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "Email does not exist." });
-    }
-    if (!user.is_admin) {
-      return res.status(403).json({
-        status: "403 Forbidden",
-        message: "User is not an administrator.",
-      });
-    }
-    const result = await bcrypt.compare(req.body.password, user.password);
-    if (!result) {
-      return res
-        .status(401)
-        .json({ status: "401 Unauthorized", message: "Invalid password." });
-    }
-
-    const payload = {
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      is_admin: user.is_admin,
-    };
-
-    const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
-      expiresIn: "20m",
-      jwtid: uuidv4(),
-    });
-
-    const refresh = jwt.sign(payload, process.env.REFRESH_SECRET, {
-      expiresIn: "30D",
-      jwtid: uuidv4(),
-    });
-
-    const response = { access, refresh };
-    res.json(response);
-  } catch (err) {
-    console.log("POST /users/admin-login", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
-  }
-};
-
 // Function to generate new access token
 const refresh = async (req, res) => {
   try {
@@ -347,7 +297,6 @@ module.exports = {
   updateUser,
   deleteUser,
   userLogin,
-  adminLogin,
   refresh,
   getStrategiesByUser,
   createStrategy,
