@@ -1,7 +1,7 @@
 //Import environment
 require("dotenv").config();
 // Import User model
-const { User } = require("../models");
+const { User, Strategy } = require("../models");
 // Import modules for encryption
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,16 +15,13 @@ const createUser = async (req, res) => {
     const user = await User.findOne({ where: { email: req.body.email } });
     if (user) {
       return res.status(400).json({
-        status: "400 Bad Request",
         message: "User already exists",
       });
     }
     //Check if password is valid
     const err = validationResult(req);
     if (!err.isEmpty()) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: err.array() });
+      return res.status(400).json({ message: err.array() });
     }
     //Create user account after checks
     const hash = await bcrypt.hash(req.body.password, 10);
@@ -34,15 +31,13 @@ const createUser = async (req, res) => {
       email: req.body.email,
       password: hash,
       is_admin: req.body.is_admin,
-      is_active: req.body.is_active,
     });
     res.status(201).json({
-      status: "201 Created",
       message: "User has been created successfully.",
     });
   } catch (err) {
     console.log("PUT /users/create", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -55,7 +50,7 @@ const getAllUsers = async (req, res) => {
     res.json(allUsers);
   } catch (err) {
     console.log("GET /users/all-users", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -68,14 +63,12 @@ const getUser = async (req, res) => {
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "User does not exist." });
+      return res.status(404).json({ message: "User not found." });
     }
     res.json(user);
   } catch (err) {
     console.log("GET /users/user", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -89,9 +82,7 @@ const updateUser = async (req, res) => {
       where: { id: req.params.id },
     });
     if (!user) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "User does not exist." });
+      return res.status(404).json({ message: "User not found." });
     }
     const hash = await bcrypt.hash(req.body.password, 10);
     await User.update(
@@ -100,16 +91,15 @@ const updateUser = async (req, res) => {
         last_name: req.body.last_name,
         password: hash,
         is_admin: req.body.is_admin,
-        is_active: req.body.is_active,
       },
       {
         where: { id: req.params.id },
       }
     );
-    res.status(200).json({ status: "200 OK", message: "User is updated." });
+    res.status(200).json({ message: "User is updated." });
   } catch (err) {
     console.log("PUT /users/update/:id", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -117,10 +107,10 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     await User.destroy({ where: { email: req.body.email } });
-    res.status(200).json({ status: "200 OK", message: "User is deleted." });
+    res.status(200).json({ message: "User is deleted." });
   } catch (err) {
     console.log("DEL /users/delete", err);
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -129,9 +119,7 @@ const userLogin = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email } });
     if (!user) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "User does not exist." });
+      return res.status(404).json({ message: "User not found." });
     }
 
     const result = await bcrypt.compare(req.body.password, user.password);
@@ -239,7 +227,40 @@ const refresh = async (req, res) => {
     res.json(response);
   } catch (err) {
     console.log("POST /users/refresh", err);
-    res.status(401).json({ status: "401 Unauthorized", message: err.message });
+    res.status(401).json({ message: err.message });
+  }
+};
+
+// Function to get strategies by user UUID (NEED AUTH)
+const getStrategiesByUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Strategy,
+          attributes: [
+            "id",
+            "symbol",
+            "title",
+            "capital",
+            "start_date",
+            "end_date",
+            "sSMA",
+            "lSMA",
+            "qty_shares",
+          ],
+        },
+      ],
+    });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const strategies = user.Strategies;
+    return res.status(200).json({ strategies });
+  } catch (err) {
+    console.log("GET /:id/strategies", err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -252,4 +273,5 @@ module.exports = {
   userLogin,
   adminLogin,
   refresh,
+  getStrategiesByUser,
 };

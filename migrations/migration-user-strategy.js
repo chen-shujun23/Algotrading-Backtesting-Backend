@@ -13,11 +13,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
         references: { model: "users", key: "id" },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
       strategy_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "strategies", key: "id" },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
       createdAt: {
         allowNull: false,

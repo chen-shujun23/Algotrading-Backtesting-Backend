@@ -14,6 +14,7 @@ const {
   userLogin,
   adminLogin,
   refresh,
+  getStrategiesByUser,
 } = require("../controllers/users");
 
 // Create routes/ endpoints
@@ -34,6 +35,7 @@ router.delete("/delete", auth, deleteUser);
 router.post("/user-login", userLogin);
 router.post("/admin-login", adminLogin);
 router.post("/refresh", refresh);
+router.get("/:id/strategies", auth, getStrategiesByUser);
 
 // Export routes for server.js to access
 module.exports = router;

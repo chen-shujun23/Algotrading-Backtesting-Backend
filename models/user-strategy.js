@@ -10,7 +10,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // define association with User model
+      UserStrategy.belongsTo(models.User, {
+        foreignKey: "user_id",
+        targetKey: "id",
+      });
+
+      // define association with Strategy model
+      UserStrategy.belongsTo(models.Strategy, {
+        foreignKey: "strategy_id",
+        targetKey: "id",
+      });
     }
   }
   UserStrategy.init(
@@ -25,11 +35,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: Sequelize.UUID,
         references: { model: "users", key: "id" },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
       strategy_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "strategies", key: "id" },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
     },
     {
