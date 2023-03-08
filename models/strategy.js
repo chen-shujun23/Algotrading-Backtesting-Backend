@@ -31,22 +31,36 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      short_term_sma_buy: {
+      title: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      capital: {
+        allowNull: false,
+        type: Sequelize.FLOAT,
+        validate: { isFloat: true },
+      },
+      start_date: {
+        allowNull: false,
+        type: Sequelize.DATEONLY,
+        validate: { isDate: true },
+      },
+      end_date: {
+        allowNull: false,
+        type: Sequelize.DATEONLY,
+        validate: { isDate: true },
+      },
+      sSMA: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
       },
-      long_term_sma_buy: {
+      lSMA: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
       },
-      short_term_sma_sell: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      long_term_sma_sell: {
+      qty_shares: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },

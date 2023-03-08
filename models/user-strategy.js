@@ -21,10 +21,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
       user_id: {
         allowNull: false,
         type: Sequelize.UUID,
@@ -34,40 +30,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: "strategies", key: "id" },
-      },
-      capital: {
-        allowNull: false,
-        type: Sequelize.FLOAT,
-        validate: { isFloat: true },
-      },
-      start_date: {
-        allowNull: false,
-        type: Sequelize.DATEONLY,
-        validate: { isDate: true },
-      },
-      end_date: {
-        allowNull: false,
-        type: Sequelize.DATEONLY,
-        validate: { isDate: true },
-      },
-      qty_shares_buy: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      qty_shares_sell: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      is_history: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
-        validate: {
-          isBoolean: function (val) {
-            return typeof val == "boolean";
-          },
-        },
       },
     },
     {

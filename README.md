@@ -40,3 +40,5 @@ Golden Cross (Bullish signal) -> BUY
 50 SMA > 200 SMA
 50 SMA > 100 SMA
 20 SMA > 50 SMA
+
+
