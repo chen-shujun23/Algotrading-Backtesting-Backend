@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 
 // Function to CREATE a new user
 const createUser = async (req, res) => {
@@ -87,9 +88,33 @@ const updateUser = async (req, res) => {
 
 // Function to DELETE user account (NEED AUTH)
 const deleteUser = async (req, res) => {
+  const { id } = req.body;
   try {
-    await User.destroy({ where: { email: req.body.email } });
-    res.status(200).json({ message: "User is deleted." });
+    //find all strategy IDs associated with user
+    const strategyIds = (
+      await UserStrategy.findAll({ where: { user_id: id } })
+    ).map((userStrategy) => userStrategy.id);
+
+    //find all other strategy IDs NOT associated with user
+    const otherUserStrategyIds = (
+      await UserStrategy.findAll({
+        where: { id: { [Op.notIn]: strategyIds } },
+      })
+    ).map((userStrategy) => userStrategy.id);
+
+    // delete associated entries from users-strategies table
+    await UserStrategy.destroy({ where: { user_id: id } });
+
+    //delete strategies that solely belongs to user from strategies table
+    await Strategy.destroy({
+      where: { id: { [Op.in]: strategyIds, [Op.notIn]: otherUserStrategyIds } },
+    });
+
+    //delete the user from users table
+    await User.destroy({ where: { id } });
+    res.status(200).json({
+      message: `User is deleted along with associated strategies.`,
+    });
   } catch (err) {
     console.log("DEL /users/delete", err);
     res.status(400).json({ message: err.message });
