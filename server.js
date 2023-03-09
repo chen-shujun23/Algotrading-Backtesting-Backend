@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5001;
 
 //Import routes
 const users = require("./routes/users");
+const strategies = require("./routes/strategies");
 
 //Connect to Database
 connectDB();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/users", users);
+app.use("/strategies", strategies);
 
 app.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);

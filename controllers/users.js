@@ -55,11 +55,27 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// Function to READ one user account
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findAll({
+      where: { email: req.body.email },
+      attributes: ["first_name", "last_name", "email"],
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: "400 Bad Request", message: "User does not exist." });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ status: "400 Bad Request", message: err.message });
+  }
+};
+
 // Function to UPDATE user account (NEED AUTH)
 const updateUser = async (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
-
   try {
     const user = await User.findOne({
       where: { id: req.params.id },
@@ -67,13 +83,12 @@ const updateUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-    const hash = await bcrypt.hash(req.body.password, 10);
+
     await User.update(
       {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        password: hash,
-        is_admin: req.body.is_admin,
+        email: req.body.email,
       },
       {
         where: { id: req.params.id },
@@ -300,6 +315,7 @@ const createStrategy = async (req, res) => {
 module.exports = {
   createUser,
   getAllUsers,
+  getUser,
   updateUser,
   deleteUser,
   userLogin,
