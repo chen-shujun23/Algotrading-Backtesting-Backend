@@ -9,7 +9,6 @@ const authAdmin = require("../middleware/authAdmin");
 const {
   createUser,
   getAllUsers,
-  getUser,
   updateUser,
   deleteUser,
   userLogin,
@@ -30,9 +29,8 @@ router.put(
   createUser
 );
 router.get("/all-users", authAdmin, getAllUsers);
-router.get("/user", auth, getUser);
 router.put("/update/:id", auth, updateUser);
-router.delete("/delete", auth, deleteUser);
+router.delete("/delete", authAdmin, deleteUser);
 router.post("/user-login", userLogin);
 router.post("/refresh", refresh);
 router.get("/:id/strategies", auth, getStrategiesByUser);

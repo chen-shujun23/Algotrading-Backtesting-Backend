@@ -54,24 +54,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Function to READ one user account (NEED AUTH)
-const getUser = async (req, res) => {
-  try {
-    const user = await User.findAll({
-      where: { email: req.body.email },
-      attributes: ["id", "first_name", "last_name", "email", "is_admin"],
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-    res.json(user);
-  } catch (err) {
-    console.log("GET /users/user", err);
-    res.status(400).json({ message: err.message });
-  }
-};
-
 // Function to UPDATE user account (NEED AUTH)
 const updateUser = async (req, res) => {
   console.log(req.params);
@@ -293,7 +275,6 @@ const createStrategy = async (req, res) => {
 module.exports = {
   createUser,
   getAllUsers,
-  getUser,
   updateUser,
   deleteUser,
   userLogin,
