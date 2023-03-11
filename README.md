@@ -1,4 +1,6 @@
-# Frontend Development for Handicaps Welfare Assocation
+# Backend Development for AlgoBeez
+
+This is the backend development for AlgoBeez, an algorithmic trading backtesting application.
 
 ## Installation
 
@@ -11,6 +13,19 @@
 
 3. Start the development server: npm start
 4. Open http://localhost:5001 or any other port that you have configured to view it in the browser.
+5. Create an env file with the following configuration:
+
+```javascript
+PORT = 5001;
+DB_DATABASE = algobeez;
+DB_USERNAME = your_username;
+DB_PASSWORD = your_password;
+DB_HOST = localhost;
+DB_DIALECT = postgres;
+NODE_ENV = development;
+ACCESS_SECRET = your_access_secret;
+REFRESH_SECRET = your_refresh_secret;
+```
 
 ## Usage
 
@@ -35,49 +50,4 @@ This project uses the following technologies:
 
 ## Unsolved Problems & Further Work
 
-- Poorly optimized HTTP requests for events that made the application slow in loading images. We should refactor the code such that we do not have to call the database so many times. We should call the database as infrequently as possible and filter the events on the front-end instead.
-
-- Mapping fetched data led to some props not being rendered, such as the background colour of event tags and the number of search results.
-
-- Minor styling issues that make the web application differ slightly from the original UX design.
-
-- Further optimization of hierarchy.
-
-1. Create env file with
-
-PORT=8000
-DB_DATABASE=dbname
-DB_USERNAME=username
-DB_PASSWORD=password
-DB_HOST=localhost
-DB_DIALECT=postgres
-NODE_ENV=development
-
-2. Create database => npx sequelize-cli db:create
-
-npm START
-npm run migrate
-npm run seed-users
-npm run seed-strategies
-npm run seed-users-strategies
-
-access_token in state, refresh token in local storage
-
-User.hasMany(UserStrategy)
-UserStrategy.belongsTo(User)
-
-Strategy.hasMany(UserStrategy)
-UserStrategy.belongsTo(Strategy)
-
-User.belongsToMany(Strategy,{through:'users-strategies'})
-Strategy.belongsToMany(User,{through:'users-strategies'})
-
-Death Cross (Bearish signal) -> SELL
-50 SMA < 200 SMA
-50 SMA < 100 SMA
-20 SMA < 50 SMA
-
-Golden Cross (Bullish signal) -> BUY
-50 SMA > 200 SMA
-50 SMA > 100 SMA
-20 SMA > 50 SMA
+- Create more endpoints for features, such as search for strategies.
