@@ -48,6 +48,8 @@ This project uses the following technologies:
 
 ## Backend Approach
 
+This project uses Sequelize as an ORM. Sequelize CLI is a command-line interface for Sequelize, an ORM for Node.js that supports various databases such as PostgreSQL, MySQL, SQLite, and MSSQL. The CLI makes it easier to manage Sequelize projects by providing a set of commands that help you generate models, migrations, and seed files, as well as perform database operations like creating and dropping databases, running migrations, and seeding data.
+
 ## Unsolved Problems & Further Work
 
 - Create more endpoints for features, such as search for strategies.
