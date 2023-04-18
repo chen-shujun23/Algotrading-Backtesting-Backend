@@ -1,9 +1,11 @@
 //Import environment
-require("dotenv").config();
-// Import User model
+import * as dotenv from "dotenv";
+dotenv.config();
+// Import models
 const { User, Strategy, UserStrategy } = require("../models");
-// Import modules for encryption
+// Import bcrypt for password hashing
 const bcrypt = require("bcrypt");
+//Import jwt for user authentication
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const { validationResult } = require("express-validator");
