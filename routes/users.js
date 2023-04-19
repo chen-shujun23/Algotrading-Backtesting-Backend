@@ -38,5 +38,13 @@ router.post("/refresh", refresh);
 router.get("/:id/strategies", auth, getStrategiesByUser);
 router.post("/:id/strategies", auth, createStrategy);
 
+//Testing
+router.get("/", async (req, res, next) => {
+  return res.status(200).json({
+    title: "Express Testing",
+    message: "The app is working properly!",
+  });
+});
+
 // Export routes for server.js to access
 module.exports = router;

@@ -1,6 +1,5 @@
 //Import environment
-import * as dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config();
 // Import models
 const { User, Strategy, UserStrategy } = require("../models");
 // Import bcrypt for password hashing

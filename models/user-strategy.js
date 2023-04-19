@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association with User model
       UserStrategy.belongsTo(models.User, {
-        foreignKey: "user_id",
-        targetKey: "id",
+        foreignKey: "user_email",
+        targetKey: "email",
       });
 
       // define association with Strategy model
@@ -31,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      user_email: {
         allowNull: false,
-        type: Sequelize.UUID,
-        references: { model: "users", key: "id" },
+        type: Sequelize.STRING,
+        references: { model: "users", key: "email" },
         onDelete: "cascade",
         onUpdate: "cascade",
       },
