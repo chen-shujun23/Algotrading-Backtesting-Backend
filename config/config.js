@@ -9,11 +9,11 @@ module.exports = {
     dialect: "postgres",
   },
   production: {
-    // use_env_variable: process.env.ENV_VARIABLE,
-    username: process.env.PROD_DB_USERNAME,
-    password: process.env.PROD_DB_PASSWORD,
-    database: process.env.PROD_DB_DATABASE,
-    host: process.env.PROD_DB_HOST,
+    use_env_variable: process.env.DATABASE_URL,
+    // username: process.env.PROD_DB_USERNAME,
+    // password: process.env.PROD_DB_PASSWORD,
+    // database: process.env.PROD_DB_DATABASE,
+    // host: process.env.PROD_DB_HOST,
     dialect: "postgres",
     dialectOptions: {
       ssl: {
