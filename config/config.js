@@ -9,10 +9,17 @@ module.exports = {
     dialect: process.env.DIALECT,
   },
   production: {
-    username: process.env.PROD_USERNAME,
-    password: process.env.PROD_PASSWORD,
-    database: process.env.PROD_DATABASE,
-    host: process.env.PROD_HOST,
+    use_env_variable: process.env.ENV_VARIABLE,
+    username: process.env.PROD_DB_USERNAME,
+    password: process.env.PROD_DB_PASSWORD,
+    database: process.env.PROD_DB_DATABASE,
+    host: process.env.PROD_DB_HOST,
     dialect: process.env.DIALECT,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   },
 };
