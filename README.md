@@ -52,4 +52,4 @@ This project uses Sequelize as an ORM. Sequelize CLI is a command-line interface
 
 ## Unsolved Problems & Further Work
 
-- Create more endpoints for features, such as search for strategies...
+- Create more endpoints for features, such as search for strategies.
