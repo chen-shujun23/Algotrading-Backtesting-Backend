@@ -19,10 +19,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
     {
+      email: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        primaryKey: true,
+        unique: true,
+        validate: { isEmail: true },
+      },
       id: {
         allowNull: false,
         defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
         type: Sequelize.UUID,
       },
       first_name: {
@@ -40,12 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: Sequelize.STRING,
         validate: { isAlpha: true },
-      },
-      email: {
-        allowNull: false,
-        type: Sequelize.STRING,
-        unique: true,
-        validate: { isEmail: true },
       },
       password: {
         allowNull: false,

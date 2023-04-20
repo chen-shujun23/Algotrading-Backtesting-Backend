@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserStrategy,
         foreignKey: "strategy_id",
       });
+      Strategy.belongsTo(models.TrendIndicator, {
+        foreignKey: "trend_indicator_id",
+      });
     }
   }
   Strategy.init(
@@ -54,20 +57,17 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.DATEONLY,
         validate: { isDate: true },
       },
-      sSMA: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
-      lSMA: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        validate: { isInt: true },
-      },
       qty_shares: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
+      },
+      trend_indicator_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+        references: { model: "strategies", key: "id" },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
     },
     {
