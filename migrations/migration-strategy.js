@@ -1,21 +1,8 @@
 "use strict";
-const { Model } = require("sequelize");
-const Sequelize = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  class Strategy extends Model {
-    static associate(models) {
-      // define association here
-      Strategy.belongsToMany(models.User, {
-        through: models.UserStrategy,
-        foreignKey: "strategy_id",
-      });
-      Strategy.belongsTo(models.TrendIndicator, {
-        foreignKey: "trend_indicator_id",
-      });
-    }
-  }
-  Strategy.init(
-    {
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("strategies", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -52,24 +39,32 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.DATEONLY,
         validate: { isDate: true },
       },
+      sSMA: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
+      lSMA: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
+      },
       qty_shares: {
         allowNull: false,
         type: Sequelize.INTEGER,
         validate: { isInt: true },
       },
-      trend_indicator_id: {
+      createdAt: {
         allowNull: false,
-        type: Sequelize.INTEGER,
-        references: { model: "strategies", key: "id" },
-        onDelete: "cascade",
-        onUpdate: "cascade",
+        type: Sequelize.DATE,
       },
-    },
-    {
-      sequelize,
-      tableName: "strategies",
-      modelName: "Strategy",
-    }
-  );
-  return Strategy;
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("strategies");
+  },
 };

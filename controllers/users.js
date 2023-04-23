@@ -1,26 +1,33 @@
 //Import environment
 require("dotenv").config();
 // Import models
-const { User, Strategy, UserStrategy } = require("../models");
+const { User } = require("../models");
 // Import bcrypt for password hashing
 const bcrypt = require("bcrypt");
 //Import jwt for user authentication
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const { validationResult } = require("express-validator");
-const { Op } = require("sequelize");
+const { body, validationResult } = require("express-validator");
 
 // Function to CREATE a new user
 const createUser = async (req, res) => {
   try {
-    //Check if user already exists
     const user = await User.findOne({ where: { email: req.body.email } });
+    //Check if user already exists
     if (user) {
       return res.status(400).json({
         message: "User already exists",
       });
     }
     //Check if password is valid
+    body("password")
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters long")
+      .matches(/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/, "i")
+      .withMessage(
+        "Password must contain at least one letter, one number, and one special character"
+      );
+
     const err = validationResult(req);
     if (!err.isEmpty()) {
       return res.status(400).json({ message: err.array() });
@@ -43,7 +50,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// Function to READ all user accounts (NEED AUTH)
+// Function to READ all user accounts
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await User.findAll({
@@ -56,26 +63,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Function to READ one user account
-const getUser = async (req, res) => {
-  try {
-    const user = await User.findAll({
-      where: { email: req.body.email },
-      attributes: ["first_name", "last_name", "email"],
-    });
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ status: "400 Bad Request", message: "User does not exist." });
-    }
-    res.json(user);
-  } catch (err) {
-    res.status(400).json({ status: "400 Bad Request", message: err.message });
-  }
-};
-
-// Function to UPDATE user account (NEED AUTH)
+// Function to UPDATE user account
 const updateUser = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -84,7 +72,6 @@ const updateUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-
     await User.update(
       {
         first_name: req.body.first_name,
@@ -102,34 +89,14 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Function to DELETE user account (NEED AUTH)
+// Function to DELETE user account
 const deleteUser = async (req, res) => {
   const { id } = req.body;
   try {
-    //find all strategy IDs associated with user
-    const strategyIds = (
-      await UserStrategy.findAll({ where: { user_id: id } })
-    ).map((userStrategy) => userStrategy.id);
-
-    //find all other strategy IDs NOT associated with user
-    const otherUserStrategyIds = (
-      await UserStrategy.findAll({
-        where: { id: { [Op.notIn]: strategyIds } },
-      })
-    ).map((userStrategy) => userStrategy.id);
-
-    // delete associated entries from users-strategies table
-    await UserStrategy.destroy({ where: { user_id: id } });
-
-    //delete strategies that solely belongs to user from strategies table
-    await Strategy.destroy({
-      where: { id: { [Op.in]: strategyIds, [Op.notIn]: otherUserStrategyIds } },
-    });
-
     //delete the user from users table
     await User.destroy({ where: { id } });
     res.status(200).json({
-      message: `User is deleted along with associated strategies.`,
+      message: `User is deleted.`,
     });
   } catch (err) {
     console.log("DEL /users/delete", err);
@@ -137,7 +104,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// Function for user login
+// Function for user LOGIN
 const userLogin = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email } });
@@ -178,7 +145,7 @@ const userLogin = async (req, res) => {
   }
 };
 
-// Function to generate new access token
+// Function to generate REFRESH token
 const refresh = async (req, res) => {
   try {
     const decoded = jwt.verify(req.body.refresh, process.env.REFRESH_SECRET);
@@ -204,123 +171,11 @@ const refresh = async (req, res) => {
   }
 };
 
-// Function to get strategies by user UUID (NEED AUTH)
-const getStrategiesByUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id, {
-      include: [
-        {
-          model: Strategy,
-          attributes: [
-            "id",
-            "symbol",
-            "title",
-            "capital",
-            "start_date",
-            "end_date",
-            "sSMA",
-            "lSMA",
-            "qty_shares",
-          ],
-        },
-      ],
-    });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const strategies = user.Strategies;
-    return res.status(200).send({ strategies });
-  } catch (err) {
-    console.log("GET /:id/strategies", err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-//Function to create a new strategy for user (NEED AUTH)
-const createStrategy = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) {
-      return res.status(404).send("User not found.");
-    }
-
-    if (user.is_admin) {
-      return res.status(403).json({
-        message: "Cannot create strategies using admin account.",
-      });
-    }
-
-    let existingStrategy = await Strategy.findOne({
-      where: {
-        symbol: req.body.symbol,
-        title: req.body.title,
-        capital: req.body.capital,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date,
-        sSMA: req.body.sSMA,
-        lSMA: req.body.lSMA,
-        qty_shares: req.body.qty_shares,
-      },
-    });
-
-    if (existingStrategy) {
-      const userStrategy = await UserStrategy.findOne({
-        where: {
-          user_id: user.id,
-          strategy_id: existingStrategy.id,
-        },
-      });
-
-      if (userStrategy) {
-        return res.status(409).json({
-          message: "This strategy already exists for user.",
-        });
-      }
-
-      // Associate existing strategy with the new user
-      await UserStrategy.create({
-        user_id: user.id,
-        strategy_id: existingStrategy.id,
-      });
-
-      return res.json({
-        message: "Existing strategy has been associated with the user.",
-      });
-    }
-
-    const strategy = await Strategy.create({
-      symbol: req.body.symbol,
-      title: req.body.title,
-      capital: req.body.capital,
-      start_date: req.body.start_date,
-      end_date: req.body.end_date,
-      sSMA: req.body.sSMA,
-      lSMA: req.body.lSMA,
-      qty_shares: req.body.qty_shares,
-    });
-
-    await UserStrategy.create({
-      user_id: user.id,
-      strategy_id: strategy.id,
-    });
-
-    res
-      .status(201)
-      .json({ message: "Strategy has been created successfully." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-};
-
 module.exports = {
   createUser,
   getAllUsers,
-  getUser,
   updateUser,
   deleteUser,
   userLogin,
   refresh,
-  getStrategiesByUser,
-  createStrategy,
 };

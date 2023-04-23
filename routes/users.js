@@ -9,13 +9,10 @@ const authAdmin = require("../middleware/authAdmin");
 const {
   createUser,
   getAllUsers,
-  getUser,
   updateUser,
   deleteUser,
   userLogin,
   refresh,
-  getStrategiesByUser,
-  createStrategy,
 } = require("../controllers/users");
 
 // Create routes/ endpoints
@@ -30,21 +27,10 @@ router.put(
   createUser
 );
 router.get("/all-users", authAdmin, getAllUsers);
-router.get("/user/", getUser);
 router.put("/update/:id", auth, updateUser);
 router.delete("/delete", authAdmin, deleteUser);
 router.post("/user-login", userLogin);
 router.post("/refresh", refresh);
-router.get("/:id/strategies", auth, getStrategiesByUser);
-router.post("/:id/strategies", auth, createStrategy);
-
-//Testing
-router.get("/", async (req, res, next) => {
-  return res.status(200).json({
-    title: "Express Testing",
-    message: "The app is working properly!",
-  });
-});
 
 // Export routes for server.js to access
 module.exports = router;

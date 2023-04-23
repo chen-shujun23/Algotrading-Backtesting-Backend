@@ -1,19 +1,10 @@
 "use strict";
-const { Model } = require("sequelize");
-const Sequelize = require("sequelize");
+/** @type {import('sequelize-cli').Migration} */
+const bcrypt = require("bcrypt");
 
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate(models) {
-      // define association here
-      User.belongsToMany(models.Strategy, {
-        through: models.UserStrategy,
-        foreignKey: "user_email",
-      });
-    }
-  }
-  User.init(
-    {
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("users", {
       email: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -56,12 +47,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-    },
-    {
-      sequelize,
-      tableName: "users",
-      modelName: "User",
-    }
-  );
-  return User;
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("users");
+  },
 };
