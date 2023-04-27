@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
-      User.belongsToMany(models.Strategy, {
+      User.belongsToMany(models.StrategySMA, {
         through: models.UserStrategy,
         foreignKey: "user_email",
       });
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 
         type: Sequelize.UUID,
       },
-      first_name: {
+      given_name: {
         allowNull: false,
         type: Sequelize.STRING,
         validate: {
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      last_name: {
+      family_name: {
         allowNull: false,
         type: Sequelize.STRING,
         validate: { isAlpha: true },
@@ -48,6 +48,15 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
       },
       is_admin: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        validate: {
+          isBoolean: function (val) {
+            return typeof val == "boolean";
+          },
+        },
+      },
+      google_acc: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
         validate: {

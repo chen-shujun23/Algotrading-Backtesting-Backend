@@ -2,19 +2,16 @@
 const { Model } = require("sequelize");
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Strategy extends Model {
+  class StrategySMA extends Model {
     static associate(models) {
       // define association here
-      Strategy.belongsToMany(models.User, {
+      StrategySMA.belongsToMany(models.User, {
         through: models.UserStrategy,
-        foreignKey: "strategy_id",
-      });
-      Strategy.belongsTo(models.TrendIndicator, {
-        foreignKey: "trend_indicator_id",
+        foreignKey: "strategySMA_id",
       });
     }
   }
-  Strategy.init(
+  StrategySMA.init(
     {
       id: {
         allowNull: false,
@@ -57,19 +54,22 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.INTEGER,
         validate: { isInt: true },
       },
-      trend_indicator_id: {
+      sSMA: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: { model: "strategies", key: "id" },
-        onDelete: "cascade",
-        onUpdate: "cascade",
+        validate: { isInt: true },
+      },
+      lSMA: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        validate: { isInt: true },
       },
     },
     {
       sequelize,
-      tableName: "strategies",
-      modelName: "Strategy",
+      tableName: "strategiesSMA",
+      modelName: "StrategySMA",
     }
   );
-  return Strategy;
+  return StrategySMA;
 };

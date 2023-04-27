@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_email",
         targetKey: "email",
       });
-      // define association with Strategy model
-      UserStrategy.belongsTo(models.Strategy, {
-        foreignKey: "strategy_id",
+      // define association with StrategySMA model
+      UserStrategy.belongsTo(models.StrategySMA, {
+        foreignKey: "strategySMA_id",
         targetKey: "id",
       });
     }
@@ -32,10 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "cascade",
         onUpdate: "cascade",
       },
-      strategy_id: {
-        allowNull: false,
+      strategySMA_id: {
+        allowNull: true,
         type: Sequelize.INTEGER,
-        references: { model: "strategies", key: "id" },
+        references: { model: "strategiesSMA", key: "id" },
         onDelete: "cascade",
         onUpdate: "cascade",
       },

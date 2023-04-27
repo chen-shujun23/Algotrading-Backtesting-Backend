@@ -35,11 +35,12 @@ const createUser = async (req, res) => {
     //Create user account after checks
     const hash = await bcrypt.hash(req.body.password, 10);
     await User.create({
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+      given_name: req.body.given_name,
+      family_name: req.body.family_name,
       email: req.body.email,
       password: hash,
       is_admin: req.body.is_admin,
+      google_acc: req.body.google_acc,
     });
     res.status(201).json({
       message: "User has been created successfully.",
@@ -54,7 +55,7 @@ const createUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await User.findAll({
-      attributes: ["id", "first_name", "last_name", "email", "is_admin"],
+      attributes: ["id", "given_name", "family_name", "email", "is_admin"],
     });
     res.json(allUsers);
   } catch (err) {
@@ -74,8 +75,8 @@ const updateUser = async (req, res) => {
     }
     await User.update(
       {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        given_name: req.body.given_name,
+        family_name: req.body.family_name,
         email: req.body.email,
       },
       {
@@ -121,10 +122,11 @@ const userLogin = async (req, res) => {
 
     const payload = {
       id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      given_name: user.given_name,
+      family_name: user.family_name,
       email: user.email,
       is_admin: user.is_admin,
+      google_acc: user.google_acc,
     };
 
     const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
@@ -152,8 +154,8 @@ const refresh = async (req, res) => {
 
     const payload = {
       id: decoded.id,
-      first_name: decoded.first_name,
-      last_name: decoded.last_name,
+      given_name: decoded.given_name,
+      family_name: decoded.family_name,
       email: decoded.email,
       is_admin: decoded.is_admin,
     };

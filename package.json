@@ -10,8 +10,7 @@
     "migrate": "npx sequelize-cli db:migrate",
     "undo-migrate-all": "npx sequelize-cli db:migrate:undo:all",
     "seed-users": "npx sequelize db:seed --seed demo-users.js",
-    "seed-trend_indicators": "npx sequelize db:seed --seed demo-trend_indicators.js",
-    "seed-strategies": "npx sequelize db:seed --seed demo-strategies.js",
+    "seed-strategiesSMA": "npx sequelize db:seed --seed demo-strategiesSMA.js",
     "seed-users-strategies": "npx sequelize db:seed --seed demo-users-strategies.js",
     "undo-seed-all": "npx sequelize-cli db:seed:undo:all"
   },
